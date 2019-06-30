@@ -1,0 +1,7 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/Hirss/MevFFA
+branches:
+- master
+projects:
+  MevFFA:
+    path: ""
+...
