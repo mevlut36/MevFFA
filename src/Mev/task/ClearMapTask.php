@@ -48,11 +48,12 @@ class ClearMapTask extends Task {
         	$lv = $this->getServer()->getLevelByName("ffa");
 		//use not this in a world random lol
 		
+			$ffa = $this->plugin->getServer()->getLevelByName("ffa");
 			for ($x = -200; $x <= 200; $x++){
  			for ($y = 1; $y <= 100; $y++){
   			for ($z = -200; $z <= 200; $z++){
-    			if ($lv->getBlockIdAt($x,$y,$z) == Item::SANDSTONE){ 
-     				$lv->setBlock(new Vector3($x,$y,$z), Block::get(0));
+    			if ($ffa->getBlockIdAt($x,$y,$z) == Item::SANDSTONE){ 
+     				$ffa->setBlock(new Vector3($x,$y,$z), Block::get(0));
            				}
      				 }
      			}
