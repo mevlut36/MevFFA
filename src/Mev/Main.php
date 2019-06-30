@@ -5,27 +5,34 @@ namespace Mev;
 use pocketmine\Server;
 use pocketmine\Player;
 use pocketmine\event\Listener;
+use pocketmine\plugin\PluginBase;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
-use pocketmine\plugin\PluginBase;
+
 use pocketmine\utils\TextFormat as TF;
-use pocketmine\scheduler\Task;
 use pocketmine\utils\Config;
+
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerRespawnEvent;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerDeathEvent;
+use pocketmine\event\player\PlayerDropItemEvent;
+
 use pocketmine\event\block\BlockPlaceEvent;
-use pocketmine\level\Position;
+
+use pocketmine\scheduler\Task;
 
 use Mev\task\TeleportTask;
 use Mev\task\ScoreboardTask;
 use Mev\task\DeathTask;
 
 use pocketmine\math\Vector3;
+use pocketmine\level\Position;
+
 use pocketmine\network\mcpe\protocol\SetScorePacket;
 use pocketmine\network\mcpe\protocol\RemoveObjectivePacket;
 use pocketmine\network\mcpe\protocol\SetDisplayObjectivePacket;
@@ -34,6 +41,7 @@ use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 class Main extends PluginBase implements Listener{
    
     public function onEnable(){
+        $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getLogger()->info(TF::GREEN . "MevFFA Enabled !");
         $this->getServer()->loadLevel("ffa");
     }
@@ -74,17 +82,31 @@ class Main extends PluginBase implements Listener{
             } 
                 return true;
                 break;
+
+                case "clear":
+                $ffa = $player->getServer()->getLevelByName("ffa");
+                $ffa2 = $player->getServer()->getLevelByName("ffa-2");
+                foreach($this->getServer()->getLevelByName("ffa")) {
+                    $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
+                 }
+                    return true;
+                    break;
     }
   }
  } 
 }
-public function onDeath(PlayerDeathEvent $event) {
-	$player = $event->getPlayer();
-	$player->setGamemode(3);
-	$this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
+
+    public function onDrop(PlayerDropItemEvent $event){
+        $event->setCancelled(true);
+    }
+
+    public function onDeath(PlayerDeathEvent $event) {
+	    $player = $event->getPlayer();
+	    $player->setGamemode(3);
+	    $this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
 	}
 	
-public function Scoreboard(Player $player){
+    public function Scoreboard(Player $player){
 		$x = $player->getFloorX();
 		$y = $player->getFloorY();
 		$z = $player->getFloorZ();
