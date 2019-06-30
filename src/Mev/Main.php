@@ -86,9 +86,7 @@ class Main extends PluginBase implements Listener{
                 case "clear":
                 $ffa = $player->getServer()->getLevelByName("ffa");
                 $ffa2 = $player->getServer()->getLevelByName("ffa-2");
-                foreach($this->getServer()->getLevelByName("ffa")) {
                     $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
-                 }
                     return true;
                     break;
     }
