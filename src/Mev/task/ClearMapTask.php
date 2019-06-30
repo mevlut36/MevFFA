@@ -37,6 +37,8 @@ class ClearMapTask extends Task {
 		} 
         if($this->start == 0) {
         	$lv = $this->getServer()->getLevelByName("ffa");
+		//use not this in a world random lol
+		
 			for ($x = -200; $x <= 200; $x++){
  			for ($y = 1; $y <= 100; $y++){
   			for ($z = -200; $z <= 200; $z++){
@@ -45,7 +47,8 @@ class ClearMapTask extends Task {
            				}
      				 }
      			}
- 			}
+ 		    }
+		    
 		}
 		
     }
