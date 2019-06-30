@@ -4,20 +4,29 @@ namespace Mev\task;
 
 use Mev\Main;
 use Mev\task\ScoreboardTask;
+
+use pocketmine\block\Block;
+
 use pocketmine\item\Item;
 use pocketmine\item\ItemFactory;
 use pocketmine\item\Armor;
+
 use pocketmine\inventory\PlayerInventory;
 use pocketmine\inventory\ArmorInventory;
+
 use pocketmine\entity\Effect;
 use pocketmine\entity\EffectInstance;
+
 use pocketmine\scheduler\Task;
+
 use pocketmine\Player;
 use pocketmine\Server;
+
+use pocketmine\level\Level;
 use pocketmine\level\Position;
+
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\math\Vector3;
-use pocketmine\block\Block;
 
 class ClearMapTask extends Task {
 
