@@ -29,6 +29,7 @@ use pocketmine\scheduler\Task;
 use Mev\task\TeleportTask;
 use Mev\task\ScoreboardTask;
 use Mev\task\DeathTask;
+use Mev\task\ClearMapTask;
 
 use pocketmine\math\Vector3;
 use pocketmine\level\Position;
