@@ -118,13 +118,13 @@ class Main extends PluginBase implements Listener{
         } else {
             $config->set('kills',0);
             $config->save();
-           } 
           } 
           if($config->get('deaths') > 0){
         } else {
             $config->set('deaths',0);
             $config->save();
-          
+         } 
+        } 
     public function onDeath(PlayerDeathEvent $event) {
     	$config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
 	    $player = $event->getPlayer();
