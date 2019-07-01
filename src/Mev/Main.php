@@ -21,6 +21,7 @@ use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
 
 use pocketmine\event\block\BlockPlaceEvent;
 
@@ -42,6 +43,8 @@ use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 class Main extends PluginBase implements Listener{
    
     public function onEnable(){
+    	 @mkdir($this->getDataFolder());
+        @mkdir($this->getDataFolder()."players/");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getLogger()->info(TF::GREEN . "MevFFA Enabled !");
         $this->getServer()->loadLevel("ffa");
@@ -85,6 +88,7 @@ class Main extends PluginBase implements Listener{
                 break;
 
                 case "clear":
+                //This is very laggy don't use this for now but if you want to take the risk...
                 $ffa = $player->getServer()->getLevelByName("ffa");
                 $ffa2 = $player->getServer()->getLevelByName("ffa-2");
                     $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
@@ -99,10 +103,41 @@ class Main extends PluginBase implements Listener{
         $event->setCancelled(true);
     }
 
+        /*
+        Example to how to add what you want in a config player.
+            $config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
+            $config->set('kills',10);
+            $config->set('kills',$config->get('kills')+1);
+        */
+
+	public function onJoin(PlayerJoinEvent $event) {
+		$player = $event->getPlayer();
+        $config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
+        $config->save();
+		if($config->get('kills') > 0){
+        } else {
+            $config->set('kills',0);
+            $config->save();
+           } 
+          } 
+          if($config->get('deaths') > 0){
+        } else {
+            $config->set('deaths',0);
+            $config->save();
+          
     public function onDeath(PlayerDeathEvent $event) {
+    	$config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
 	    $player = $event->getPlayer();
 	    $player->setGamemode(3);
 	    $this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
+        $config->set('deaths',$config->get('deaths')+1);
+        //When you kill a player, you have +1 kill in the scoreboard
+	if($player->getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+       	if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
+           	$config->set('kills',$config->get('kills')+1);
+           	$config->save();
+       	}
+   	}
 	}
 	
     public function Scoreboard(Player $player){
@@ -110,6 +145,7 @@ class Main extends PluginBase implements Listener{
 		$y = $player->getFloorY();
 		$z = $player->getFloorZ();
 		$players = count($this->getServer()->getLevelByName("ffa")->getPlayers());
+		$config = new Config($this->getDataFolder()."players/".strtolower($player->getName()).".yml", Config::YAML);
 		$name = $player->getName();
         $score = 3;
         $pk = new SetDisplayObjectivePacket();
@@ -170,7 +206,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "§fDeath:";
+        $entrie->customName = "§fDeath:" . $config->get('deaths');
         $entrie->score = 5;
         $entrie->scoreboardId = 5;
         $pk1 = new SetScorePacket();
@@ -181,7 +217,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "§fKills: ";
+        $entrie->customName = "§fKills: " . $config->get('kills');
         $entrie->score = 6;
         $entrie->scoreboardId = 6;
         $pk6 = new SetScorePacket();
@@ -192,7 +228,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "";
+        $entrie->customName = "     ";
         $entrie->score = 7;
         $entrie->scoreboardId = 7;
         $pk2 = new SetScorePacket();
@@ -214,7 +250,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = str_repeat(" ", 5) . "§6  localhost";
+        $entrie->customName = "§6https://discord.gg/ZxB6YUr";
         $entrie->score = 9;
         $entrie->scoreboardId = 9;
         $pk7 = new SetScorePacket();
