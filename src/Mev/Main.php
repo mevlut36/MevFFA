@@ -94,6 +94,10 @@ class Main extends PluginBase implements Listener{
                     $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
                     return true;
                     break;
+		default:
+		   $player->sendMessage(TF::RED . "Usage: /ffa help");
+		 return true;
+		break;
     }
   }
  } 
@@ -258,5 +262,4 @@ class Main extends PluginBase implements Listener{
         $pk7->entries[] = $entrie;
         $player->sendDataPacket($pk7);
     }
-	
 }
