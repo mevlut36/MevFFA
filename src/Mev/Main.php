@@ -75,8 +75,8 @@ class Main extends PluginBase implements Listener{
             $ffa2 = $player->getServer()->getLevelByName("ffa-2");
             $name = $player->getName();
             $this->players[] = $player;
-            
-            if(count($this->getServer()->getLevelByName("ffa")->getPlayers()) < 40) {
+            $count = count($this->getServer()->getLevelByName("ffa")->getPlayers());
+            if($count < 40) {
             	$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this), 6 * 20);
             	$this->getScheduler()->scheduleRepeatingTask(new TeleportTask($this, $player), 20);
            	
