@@ -28,6 +28,7 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerDeathEvent;
 use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\block\BlockBreakEvent;
 
 use pocketmine\event\block\BlockPlaceEvent;
 
@@ -118,6 +119,11 @@ if($item instanceof Durable) {
 }
 } 
 */
+	public function onBreak(BlockBreakEvent $event) {
+		if($this->getServer()->getLevelByName("ffa")) {
+			$event->setCancelled(true);
+		} 
+	} 
     public function onDrop(PlayerDropItemEvent $event){
         $event->setCancelled(true);
     }
@@ -133,6 +139,13 @@ if($item instanceof Durable) {
 		$player = $event->getPlayer();
         $config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
         $config->save();
+        $inv = $player->getInventory();
+        $ffa = Item::get(399, 0, 1);
+        $ffa->setCustomName("§l§4FFA");
+        $inv->setItem(4, $ffa);
+        $pvp = Item::get(399, 0, 1);
+        $pvp->setCustomName("§l§21v1");
+        $inv->setItem(0, $pvp);
 		if($config->get('kills') > 0){
         } else {
             $config->set('kills',0);
@@ -144,6 +157,15 @@ if($item instanceof Durable) {
             $config->save();
          } 
         } 
+        
+        public function onInteract(PlayerInteractEvent $event){
+    $item = $event->getItem();
+	$player = $event->getPlayer();
+	$itemname = $item->getCustomName();
+    if ($itemname === "§l§4FFA"){
+		$player->getServer()->dispatchCommand($player, "ffa join");
+		}
+	}
     public function onDeath(PlayerDeathEvent $event) {
     	$config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
 	    $player = $event->getPlayer();
@@ -155,6 +177,11 @@ if($item instanceof Durable) {
        	if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
            	$config->set('kills',$config->get('kills')+1);
            	$config->save();
+          	 $player->setHealth(20);
+               $player->setFood(20);
+               $head = Item::get(322, 0, 1);
+       		$head->setCustomName("§l§6Golden Head");
+       		$inv->setItem(2, $head);
        	}
    	}
    if($event->getEntity() instanceof Player){
