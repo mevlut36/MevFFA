@@ -7,6 +7,12 @@ use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
+use pocketmine\item\Item;
+use pocketmine\item\Durable;
+
+use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\EnchantmentInstance;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
@@ -66,7 +72,7 @@ class Main extends PluginBase implements Listener{
                 $player->sendMessage(TF::GRAY . "-----" . TF::GOLD . "FFA Commands" . TF::GRAY . "-----");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa help (you are already here lol)");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa join");
-                $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa clear [Admin command]");
+            //    $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa clear [Admin command]");
                 $player->sendMessage(TF::GRAY . "-----()-----");
                 return true;
                 break;
@@ -75,8 +81,8 @@ class Main extends PluginBase implements Listener{
             $ffa2 = $player->getServer()->getLevelByName("ffa-2");
             $name = $player->getName();
             $this->players[] = $player;
-            $count = count($this->getServer()->getLevelByName("ffa")->getPlayers());
-            if($count < 40) {
+            
+            if(count($this->getServer()->getLevelByName("ffa")->getPlayers()) < 40) {
             	$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this), 6 * 20);
             	$this->getScheduler()->scheduleRepeatingTask(new TeleportTask($this, $player), 20);
            	
@@ -94,15 +100,24 @@ class Main extends PluginBase implements Listener{
                     $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
                     return true;
                     break;
-		default:
-		   $player->sendMessage(TF::RED . "Usage: /ffa help");
-		 return true;
-		break;
+                 default:
+                	$player->sendMessage(TF::RED . "Usage: /ffa help");
+                return true;
+                break;
     }
   }
  } 
 }
+/*
 
+public function useItem(PlayerItemConsumeEvent $event) {
+$item = Item::get(Item::IRON_SWORD);
+if($item instanceof Durable) {
+    $item->setUnbreakable();
+    $player->getInventory()->setItem(0, $item);
+}
+} 
+*/
     public function onDrop(PlayerDropItemEvent $event){
         $event->setCancelled(true);
     }
@@ -142,6 +157,10 @@ class Main extends PluginBase implements Listener{
            	$config->save();
        	}
    	}
+   if($event->getEntity() instanceof Player){
+       $event->setDrops([]);
+     }
+   
 	}
 	
     public function Scoreboard(Player $player){
@@ -210,7 +229,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "§fDeath:" . $config->get('deaths');
+        $entrie->customName = "§fDeath: " . $config->get('deaths');
         $entrie->score = 5;
         $entrie->scoreboardId = 5;
         $pk1 = new SetScorePacket();
@@ -243,7 +262,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "§fX: " . $x . " Y:" . $y . " Z:" . $z;
+        $entrie->customName = "§fX:" . $x . " Y:" . $y . " Z:" . $z;
         $entrie->score = 8;
         $entrie->scoreboardId = 8;
         $pk7 = new SetScorePacket();
@@ -254,7 +273,7 @@ class Main extends PluginBase implements Listener{
         $entrie = new ScorePacketEntry();
         $entrie->objectiveName = "test";
         $entrie->type = ScorePacketEntry::TYPE_FAKE_PLAYER;
-        $entrie->customName = "§6https://discord.gg/ZxB6YUr";
+        $entrie->customName = "§8----------------";
         $entrie->score = 9;
         $entrie->scoreboardId = 9;
         $pk7 = new SetScorePacket();
