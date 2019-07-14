@@ -109,16 +109,7 @@ class Main extends PluginBase implements Listener{
   }
  } 
 }
-/*
 
-public function useItem(PlayerItemConsumeEvent $event) {
-$item = Item::get(Item::IRON_SWORD);
-if($item instanceof Durable) {
-    $item->setUnbreakable();
-    $player->getInventory()->setItem(0, $item);
-}
-} 
-*/
 	public function onBreak(BlockBreakEvent $event) {
 		if($this->getServer()->getLevelByName("ffa")) {
 			$event->setCancelled(true);
@@ -143,7 +134,7 @@ if($item instanceof Durable) {
         $ffa = Item::get(399, 0, 1);
         $ffa->setCustomName("§l§4FFA");
         $inv->setItem(4, $ffa);
-        $pvp = Item::get(399, 0, 1);
+        $pvp = Item::get(265, 0, 1);
         $pvp->setCustomName("§l§21v1");
         $inv->setItem(0, $pvp);
 		if($config->get('kills') > 0){
@@ -177,11 +168,11 @@ if($item instanceof Durable) {
        	if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
            	$config->set('kills',$config->get('kills')+1);
            	$config->save();
-          	 $player->setHealth(20);
-               $player->setFood(20);
-               $head = Item::get(322, 0, 1);
+          	$player->setHealth(20);
+            $player->setFood(20);
+            $head = Item::get(322, 0, 1);
        		$head->setCustomName("§l§6Golden Head");
-       		$inv->setItem(2, $head);
+       		$inv->setItem(8, $head);
        	}
    	}
    if($event->getEntity() instanceof Player){
