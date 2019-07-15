@@ -34,7 +34,7 @@ class DeathTask extends Task {
         	$this->back--;
   			$this->player->sendMessage(TF::YELLOW . "[FFA] You will be revived in " . $this->back . " seconds");
 		} 
-        if($this->back == 1) {
+        if($this->back == 0) {
           	  $arenalevel = $this->plugin->getServer()->getLevelByName("world");
        	 	$arenaspawn = $arenalevel->getSafeSpawn();
        	 	$this->player->teleport($arenaspawn);
