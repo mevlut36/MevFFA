@@ -44,22 +44,43 @@ class ClearMapTask extends Task {
         	$this->start--;
   			$this->player->sendMessage(TF::YELLOW . "[FFA] FFA-1 will be cleared in " . $this->start . " seconds");
 		} 
-        if($this->start == 0) {
-        	$lv = $this->getServer()->getLevelByName("ffa");
-		//use not this in a world random lol
 		
-			$ffa = $this->plugin->getServer()->getLevelByName("ffa");
-			for ($x = -200; $x <= 200; $x++){
- 			for ($y = 1; $y <= 100; $y++){
-  			for ($z = -200; $z <= 200; $z++){
-    			if ($ffa->getBlockIdAt($x,$y,$z) == Item::SANDSTONE){ 
-     				$ffa->setBlock(new Vector3($x,$y,$z), Block::get(0));
-           				}
-     				 }
-     			}
- 		    }
-		    
+        if($this->start == 1) {
+			$this->reset();
 		}
 		
-    }
+	}
+	public function reset() {
+				$this->plugin->getServer()->loadLevel("world");
+				foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+					$p->getInventory()->clearAll();
+					$p->teleport($this->plugin->getServer()->getLevelByName("world")->getSafeSpawn());
+					$p->sendMessage(TF::BLUE . "The FFA world is being cleaned, please wait.");
+				}
+				$this->plugin->getServer()->unloadLevel($this->plugin->getServer()->getLevelByName("ffa"));
+				$path = $this->plugin->getServer()->getDataPath();
+				$this->recurse_copy($path."worlds/ffabackup",$path."worlds/ffa");
+				$this->plugin->getServer()->loadLevel("ffa");
+				foreach($this->plugin->getServer()->getOnlinePlayers() as $p){
+					$arenalevel = $this->plugin->getServer()->getLevelByName("world");
+       	 		$arenaspawn = $arenalevel->getSafeSpawn();
+      			  $p->teleport($arenaspawn);
+				}
+			}
+		   
+			public function recurse_copy($src,$dst) {
+			$dir = opendir($src);
+			@mkdir($dst);
+			while(false !== ( $file = readdir($dir)) ) {
+				if (( $file != '.' ) && ( $file != '..' )) {
+					if ( is_dir($src . '/' . $file) ) {
+						$this->recurse_copy($src . '/' . $file,$dst . '/' . $file);
+					}
+					else {
+						copy($src . '/' . $file,$dst . '/' . $file);
+					}
+				}
+			}
+			closedir($dir);
+			} 
 }
