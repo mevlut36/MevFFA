@@ -95,7 +95,6 @@ class Main extends PluginBase implements Listener{
                 break;
 
                 case "clear":
-                //This is very laggy don't use this for now but if you want to take the risk...
                 $ffa = $player->getServer()->getLevelByName("ffa");
                 $ffa2 = $player->getServer()->getLevelByName("ffa-2");
                     $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
