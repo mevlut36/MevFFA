@@ -50,15 +50,18 @@ use pocketmine\network\mcpe\protocol\types\ScorePacketEntry;
 class Main extends PluginBase implements Listener{
    
     public function onEnable(){
-    	 @mkdir($this->getDataFolder());
+    	@mkdir($this->getDataFolder());
         @mkdir($this->getDataFolder()."players/");
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         $this->getServer()->getLogger()->info(TF::GREEN . "MevFFA Enabled !");
         $this->getServer()->loadLevel("ffa");
+        $this->getServer()->loadLevel("ffabackup");
     }
+
     public function onDisable(){
         $this->getServer()->getLogger()->info(TF::RED . "MevFFA disabled !");
     }
+
     public function onCommand(CommandSender $player, Command $command, string $label, array $args) : bool{
     switch(strtolower($command->getName())){
       case "ffa":
@@ -73,23 +76,25 @@ class Main extends PluginBase implements Listener{
                 $player->sendMessage(TF::GRAY . "-----" . TF::GOLD . "FFA Commands" . TF::GRAY . "-----");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa help (you are already here lol)");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa join");
+                if($player->hasPermission("ffa.admin")){
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa clear [Admin command]");
+                }
                 $player->sendMessage(TF::GRAY . "-----()-----");
                 return true;
                 break;
             case "join":
-            $ffa = $player->getServer()->getLevelByName("ffa");
-            $ffa2 = $player->getServer()->getLevelByName("ffa-2");
-            $name = $player->getName();
-            $this->players[] = $player;
+                $ffa = $player->getServer()->getLevelByName("ffa");
+                $ffa2 = $player->getServer()->getLevelByName("ffa-2");
+                $name = $player->getName();
+                $this->players[] = $player;
             
             if(count($this->getServer()->getLevelByName("ffa")->getPlayers()) < 40) {
             	$this->getScheduler()->scheduleRepeatingTask(new ScoreboardTask($this), 6 * 20);
             	$this->getScheduler()->scheduleRepeatingTask(new TeleportTask($this, $player), 20);
            	
              }
-                if(count($this->getServer()->getLevelByName("ffa")->getPlayers()) >= 40) {
-                    $player->sendMessage(TF::RED . "[Warning] The FFA-1 is full.");
+            if(count($this->getServer()->getLevelByName("ffa")->getPlayers()) >= 40) {
+                $player->sendMessage(TF::RED . "[Warning] The FFA-1 is full.");
             } 
                 return true;
                 break;
@@ -115,7 +120,8 @@ class Main extends PluginBase implements Listener{
 		if($this->getServer()->getLevelByName("ffa")) {
 			$event->setCancelled(true);
 		} 
-	} 
+    } 
+    
     public function onDrop(PlayerDropItemEvent $event){
         $event->setCancelled(true);
     }
@@ -150,12 +156,12 @@ class Main extends PluginBase implements Listener{
          } 
         } 
         
-        public function onInteract(PlayerInteractEvent $event){
-    $item = $event->getItem();
-	$player = $event->getPlayer();
-	$itemname = $item->getCustomName();
-    if ($itemname === "§l§4FFA"){
-		$player->getServer()->dispatchCommand($player, "ffa join");
+    public function onInteract(PlayerInteractEvent $event){
+        $item = $event->getItem();
+	    $player = $event->getPlayer();
+	    $itemname = $item->getCustomName();
+        if ($itemname === "§l§4FFA"){
+		    $player->getServer()->dispatchCommand($player, "ffa join");
 		}
 	}
     public function onDeath(PlayerDeathEvent $event) {
@@ -165,20 +171,18 @@ class Main extends PluginBase implements Listener{
 	    $this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
         $config->set('deaths',$config->get('deaths')+1);
         //When you kill a player, you have +1 kill in the scoreboard
-	if($player->getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-       	if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
-           	$config->set('kills',$config->get('kills')+1);
-           	$config->save();
-          	$player->setHealth(20);
-            $player->setFood(20);
-            $head = Item::get(322, 0, 1);
-       		$head->setCustomName("§l§6Golden Head");
-       		$inv->setItem(8, $head);
-       	}
-   	}
-   if($event->getEntity() instanceof Player){
-       $event->setDrops([]);
-     }
+	    if($player->getLastDamageCause() instanceof EntityDamageByEntityEvent) {
+       	    if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
+           	    $config->set('kills',$config->get('kills')+1);
+           	    $config->save();
+          	    $player->setHealth(20);
+                $player->setFood(20);
+                $player->getInventory()->addItem(Item::get(ITEM::GOLDEN_APPLE, 0, 64)->setCustomName(TF::GOLD . "GoldenHead"));
+       	    }   
+   	    }
+        if($event->getEntity() instanceof Player){
+            $event->setDrops([]);
+        }
    
 	}
 	
