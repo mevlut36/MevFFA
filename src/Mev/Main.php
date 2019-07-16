@@ -73,7 +73,7 @@ class Main extends PluginBase implements Listener{
                 $player->sendMessage(TF::GRAY . "-----" . TF::GOLD . "FFA Commands" . TF::GRAY . "-----");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa help (you are already here lol)");
                 $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa join");
-            //    $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa clear [Admin command]");
+                $player->sendMessage(TF::GRAY . "-" . TF::LIGHT_PURPLE . " /ffa clear [Admin command]");
                 $player->sendMessage(TF::GRAY . "-----()-----");
                 return true;
                 break;
@@ -95,9 +95,11 @@ class Main extends PluginBase implements Listener{
                 break;
 
                 case "clear":
-                $ffa = $player->getServer()->getLevelByName("ffa");
-                $ffa2 = $player->getServer()->getLevelByName("ffa-2");
-                    $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
+                    if($player->hasPermission("ffa.admin")){
+                        $ffa = $player->getServer()->getLevelByName("ffa");
+                        $ffa2 = $player->getServer()->getLevelByName("ffa-2");
+                        $this->getScheduler()->scheduleRepeatingTask(new ClearMapTask($this, $player), 20);
+                    }
                     return true;
                     break;
                  default:
