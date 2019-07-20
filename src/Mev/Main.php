@@ -118,7 +118,7 @@ class Main extends PluginBase implements Listener{
   }
  } 
 }
-
+// set ID block in the array
 	public function onBreak(BlockBreakEvent $event) {
         $block = $event->getBlock();
         $antiblock = array(12, 20);
