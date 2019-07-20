@@ -162,6 +162,7 @@ class Main extends PluginBase implements Listener{
 	    $itemname = $item->getCustomName();
         if ($itemname === "§l§4FFA"){
 		    $player->getServer()->dispatchCommand($player, "ffa join");
+			$player->getInventory()->clearAll();
 		}
 	}
     public function onDeath(PlayerDeathEvent $event) {
@@ -170,16 +171,22 @@ class Main extends PluginBase implements Listener{
 	    $player->setGamemode(3);
 	    $this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
         $config->set('deaths',$config->get('deaths')+1);
+        $config->save();
         //When you kill a player, you have +1 kill in the scoreboard
-	    if($player->getLastDamageCause() instanceof EntityDamageByEntityEvent) {
-       	    if($player->getLastDamageCause()->getDamager() instanceof pocketmine\Player) {
-           	    $config->set('kills',$config->get('kills')+1);
-           	    $config->save();
-          	    $player->setHealth(20);
-                $player->setFood(20);
-                $player->getInventory()->addItem(Item::get(ITEM::GOLDEN_APPLE, 0, 64)->setCustomName(TF::GOLD . "GoldenHead"));
-       	    }   
-   	    }
+$cause = $player->getLastDamageCause();
+
+if($cause instanceof EntityDamageByEntityEvent) {
+    if($cause->getDamager() instanceof \pocketmine\Player) {
+        $config->set("kills", $config->get("kills")+1);
+        $config->save();
+
+        $player->setHealth(20);
+        $player->setFood(20);
+
+        $player->getInventory()->addItem(Item::get(Item::GOLDEN_APPLE, 0, 64)->setCustomName(TF::GOLD . "GoldenHead"));
+    }   
+}
+ 
         if($event->getEntity() instanceof Player){
             $event->setDrops([]);
         }
