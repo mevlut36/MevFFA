@@ -7,6 +7,9 @@ use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\plugin\PluginBase;
 
+use pocketmine\block\Block;
+use pocketmine\block\BockFactory;
+
 use pocketmine\item\Item;
 use pocketmine\item\Durable;
 
@@ -117,9 +120,17 @@ class Main extends PluginBase implements Listener{
 }
 
 	public function onBreak(BlockBreakEvent $event) {
-		if($this->getServer()->getLevelByName("ffa")) {
-			$event->setCancelled(true);
-		} 
+        $block = $event->getBlock();
+        $antiblock = array(12, 20);
+        $event->setCancelled(true);
+            if($this->getServer()->getLevelByName("ffa")) {
+                if($block->getId() == $antiblock){
+                    $event->setCancelled(true);
+                }
+                if($block->getId() == 24){
+                    $event->setCancelled(false);
+                }
+            } 
     } 
     
     public function onDrop(PlayerDropItemEvent $event){
@@ -172,26 +183,27 @@ class Main extends PluginBase implements Listener{
 	    $this->getScheduler()->scheduleRepeatingTask(new DeathTask($this, $player), 20);
         $config->set('deaths',$config->get('deaths')+1);
         $config->save();
-        //When you kill a player, you have +1 kill in the scoreboard
-$cause = $player->getLastDamageCause();
-
-if($cause instanceof EntityDamageByEntityEvent) {
-    if($cause->getDamager() instanceof \pocketmine\Player) {
-        $config->set("kills", $config->get("kills")+1);
-        $config->save();
-
-        $player->setHealth(20);
-        $player->setFood(20);
-
-        $player->getInventory()->addItem(Item::get(Item::GOLDEN_APPLE, 0, 64)->setCustomName(TF::GOLD . "GoldenHead"));
-    }   
-}
- 
+        //When you kill a player, you have +1 kill in the scoreboard 
         if($event->getEntity() instanceof Player){
             $event->setDrops([]);
         }
-   
-	}
+    }
+    public function onKill(PlayerDeathEvent $event) {
+        $player = $event->getPlayer();
+        $config = new Config($this->getDataFolder()."players/".strtolower($event->getPlayer()->getName()).".yml", Config::YAML);
+        $cause = $player->getLastDamageCause();
+        if($cause instanceof EntityDamageByEntityEvent) {
+            if($cause->getDamager() instanceof \pocketmine\Player) {
+                $config->set("kills", $config->get("kills")+1);
+                $config->save();
+
+                $player->setHealth(20);
+                $player->setFood(20);
+
+                $player->getInventory()->addItem(Item::get(Item::GOLDEN_APPLE, 0, 64)->setCustomName(TF::GOLD . "GoldenHead"));
+    }   
+}
+    }
 	
     public function Scoreboard(Player $player){
 		$x = $player->getFloorX();
