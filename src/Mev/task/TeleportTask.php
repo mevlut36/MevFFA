@@ -73,13 +73,13 @@ class TeleportTask extends Task {
 				$this->player->getArmorInventory()->setBoots($boots); 
 				$this->player->getInventory()->addItem($sword);
 				$this->player->getInventory()->addItem(Item::get(ITEM::GOLDEN_APPLE, 0, 12));
-				$this->player->getInventory()->setItem(2, Item::get(Item::DIAMOND_PICKAXE, 0, 1));
-				$this->player->getInventory()->setItem(3, Item::get(Item::SANDSTONE, 0, 64));
-				$this->player->getInventory()->setItem(4, Item::get(Item::SANDSTONE, 0, 64));
-				$this->player->getInventory()->setItem(5, Item::get(Item::SANDSTONE, 0, 64));
-				$this->player->getInventory()->setItem(6, Item::get(Item::SANDSTONE, 0, 64));
-				$this->player->getInventory()->setItem(7, Item::get(Item::SANDSTONE, 0, 64));
-				$this->player->getInventory()->setItem(8, Item::get(Item::SANDSTONE, 0, 64));
+				$this->player->getInventory()->setItem(2, Item::get(Item::DIAMOND_PICKAXE, 0, 0));
+				$this->player->getInventory()->setItem(3, Item::get(Item::SANDSTONE, 0, 0));
+				$this->player->getInventory()->setItem(4, Item::get(Item::SANDSTONE, 0, 0));
+				$this->player->getInventory()->setItem(5, Item::get(Item::SANDSTONE, 0, 0));
+				$this->player->getInventory()->setItem(6, Item::get(Item::SANDSTONE, 0, 0));
+				$this->player->getInventory()->setItem(7, Item::get(Item::SANDSTONE, 0, 0));
+				$this->player->getInventory()->setItem(8, Item::get(Item::SANDSTONE, 0, 0));
         }
     }
 }
